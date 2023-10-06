@@ -41,8 +41,8 @@ public class PJRepository implements Repository<PJ, Long>{
                     String nome = rs.getString("NM_PESSOA");
                     LocalDate nascimento = rs.getDate("DT_NASCIMENTO").toLocalDate();
                     String tipo = rs.getString("TP_PESSOA");
-                    String cpj = rs.getString("NR_CNPJ");
-                    list.add(new PJ(id, nome, nascimento, cpj));
+                    String cnpj = rs.getString("NR_CNPJ");
+                    list.add(new PJ(id, nome, nascimento, cnpj));
                 }
             }
         } catch (SQLException e) {
@@ -84,7 +84,7 @@ public class PJRepository implements Repository<PJ, Long>{
 
     @Override
     public PJ persiste(PJ pj) {
-        var sql = "BEGIN INSERT INTO TB_pj (NM_PESSOA , DT_NASCIMENTO, TP_PESSOA, NR_Cpj) VALUES (?,?,?,?) returning ID_PESSOA into ?; END;";
+        var sql = "BEGIN INSERT INTO TB_PJ (NM_PESSOA , DT_NASCIMENTO, TP_PESSOA, NR_CNPJ) VALUES (?,?,?,?) returning ID_PESSOA into ?; END;";
 
         Connection con = factory.getConnection();
         CallableStatement cs = null;
