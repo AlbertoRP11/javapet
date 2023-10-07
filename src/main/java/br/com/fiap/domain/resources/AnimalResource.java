@@ -1,7 +1,6 @@
 package br.com.fiap.domain.resources;
 
 import br.com.fiap.domain.entity.animal.Animal;
-import br.com.fiap.domain.entity.pessoa.PF;
 import br.com.fiap.domain.service.AnimalService;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;

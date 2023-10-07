@@ -1,7 +1,6 @@
 package br.com.fiap.domain.repository;
 
 import br.com.fiap.domain.entity.animal.Animal;
-import br.com.fiap.domain.entity.pessoa.Pessoa;
 import br.com.fiap.domain.entity.servico.Servico;
 import br.com.fiap.domain.service.AnimalService;
 import br.com.fiap.infra.ConnectionFactory;
@@ -16,7 +15,6 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ServicoRepository implements Repository<Servico, Long>{
 
     private AnimalService service = new AnimalService();
-
     private ConnectionFactory factory;
 
     private static final AtomicReference<ServicoRepository> instance = new AtomicReference<>();
@@ -41,11 +39,10 @@ public class ServicoRepository implements Repository<Servico, Long>{
             if (rs.isBeforeFirst()) {
                 while (rs.next()) {
                     Long id = rs.getLong("ID_SERVICO");
-                    String tipo = rs.getString("TP_SERVICO");
-                    String descricao = rs.getString("DS_SERVICO");
                     LocalDate realizacao = rs.getDate("DT_REALIZACAO").toLocalDate();
+                    String descricao = rs.getString("DS_SERVICO");
                     Animal animal = service.findById(rs.getLong("ANIMAL"));
-
+                    String tipo = rs.getString("TP_SERVICO");
                     list.add(new Servico(id, descricao, animal, realizacao, tipo));
                 }
             }
@@ -59,7 +56,32 @@ public class ServicoRepository implements Repository<Servico, Long>{
 
     @Override
     public Servico findById(Long id) {
-        return null;
+        Servico servico = null;
+        var sql = "SELECT * FROM TB_SERVICO WHERE ID_SERVICO = ?";
+        Connection con = factory.getConnection();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, id);
+            rs = ps.executeQuery();
+            if (rs.isBeforeFirst()){
+                while(rs.next()){
+                    LocalDate realizacao = rs.getDate("DT_REALIZACAO").toLocalDate();
+                    String descricao = rs.getString("DS_SERVICO");
+                    Animal animal = service.findById(rs.getLong("ANIMAL"));
+                    String tipo = rs.getString("TP_SERVICO");
+                    servico = new Servico(id, descricao, animal, realizacao, tipo);
+                }
+            } else {
+                System.out.println("Dados não encontrados com o id: " + id);
+            }
+        } catch (SQLException e) {
+            System.err.println("Não foi possível consultar os dados!\n" + e.getMessage());
+        } finally {
+            fecharObjetos(rs, ps, con);
+        }
+        return servico;
     }
 
     @Override

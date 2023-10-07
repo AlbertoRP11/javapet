@@ -1,13 +1,11 @@
 package br.com.fiap.domain.repository;
 
 import br.com.fiap.domain.entity.animal.Animal;
-import br.com.fiap.domain.entity.pessoa.PJ;
 import br.com.fiap.domain.entity.pessoa.Pessoa;
 import br.com.fiap.domain.service.PFService;
 import br.com.fiap.infra.ConnectionFactory;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -60,28 +58,27 @@ public class AnimalRepository implements Repository<Animal, Long>{
         Connection con = factory.getConnection();
         PreparedStatement ps = null;
         ResultSet rs = null;
-//        try{
-//            ps = con.prepareStatement(sql);
-//            ps.setLong(1, id);
-//            rs = ps.executeQuery();
-//            if (rs.isBeforeFirst()){
-//                while (rs.next()){
-//                    Long id = rs.getLong("ID_ANIMAL");
-//                    String nome = rs.getString("NM_ANIMAL");
-//                    String raca = rs.getString("RACA");
-//                    String descricao = rs.getString("DS_ANIMAL");
-//                    String tipo = rs.getString("TP_ANIMAL");
-//                    Pessoa dono = service.findById(rs.getLong("DONO"));
-//                    animal = new Animal(id, nome, raca, descricao, dono, tipo);
-//                }
-//            } else {
-//                System.out.println("Dados não encontrados com o id: " + id);
-//            }
-//        } catch (SQLException e) {
-//            System.err.println("Não foi possível consultar os dados!\n" + e.getMessage());
-//        } finally {
-//            fecharObjetos(rs, ps, con);
-//        }
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setLong(1, id);
+            rs = ps.executeQuery();
+            if (rs.isBeforeFirst()){
+                while (rs.next()){
+                    String nome = rs.getString("NM_ANIMAL");
+                    String raca = rs.getString("RACA");
+                    String descricao = rs.getString("DS_ANIMAL");
+                    String tipo = rs.getString("TP_ANIMAL");
+                    Pessoa dono = service.findById(rs.getLong("DONO"));
+                    animal = new Animal(id, nome, raca, descricao, dono, tipo);
+                }
+            } else {
+                System.out.println("Dados não encontrados com o id: " + id);
+            }
+        } catch (SQLException e) {
+            System.err.println("Não foi possível consultar os dados!\n" + e.getMessage());
+        } finally {
+            fecharObjetos(rs, ps, con);
+        }
         return animal;
     }
 
